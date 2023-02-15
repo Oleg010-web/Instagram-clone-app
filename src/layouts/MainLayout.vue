@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header class="bg-white text-grey-10" bordered>
-      <q-toolbar>
+      <q-toolbar class="constrain">
         <q-btn to="/camera" class="large-screen-only q-mr-sm" flat round icon="eva-camera-outline" size="20px" dense />
         <q-separator class="large-screen-only" vertical spaced/>
         <q-toolbar-title class="text-grand-hotel text-bold">
