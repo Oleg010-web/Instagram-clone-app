@@ -10,7 +10,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-footer class="bg-white" bordered>
+    <q-footer class="bg-white small-screen-only" bordered>
            <q-tabs class=" text-grey-10" active-color="primary" indicator-color="transparent">
             <q-route-tab  to="/" icon="eva-home-outline" />
             <q-route-tab  to="/camera" icon="eva-camera-outline"/>
