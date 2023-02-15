@@ -2,11 +2,11 @@
   <q-layout view="lHh Lpr lFf">
     <q-header class="bg-white text-grey-10" bordered>
       <q-toolbar>
-
+        <q-btn to="/camera" class="large-screen-only" flat round icon="eva-camera-outline" size="20px" dense />
         <q-toolbar-title class="text-grand-hotel text-bold">
           Quasagram
         </q-toolbar-title>
-
+        <q-btn to="/" class="large-screen-only" flat round icon="eva-home-outline" size="20px" dense />
       </q-toolbar>
     </q-header>
 
