@@ -1,24 +1,34 @@
 <template>
   <q-page class="constrain-more q-pa-md">
     <div class="camera-frame q-pa-md">
-      <img class="full-width" src="https://cdn.quasar.dev/img/parallax2.jpg">
+      <img class="full-width" src="https://cdn.quasar.dev/img/parallax2.jpg" />
     </div>
-      <div class="text-center q-pa-md">
-    <q-btn round color="grey-10" size="lg" icon="eva-camera" />
-    <div class="row justify-center q-ma-md">
-      <q-input class="col col-sm-6" v-model="post.caption" label="Caption" dense />
+    <div class="text-center q-pa-md">
+      <q-btn round color="grey-10" size="lg" icon="eva-camera" />
+      <div class="row justify-center q-ma-md">
+        <q-input
+          class="col col-sm-6"
+          v-model="post.caption"
+          label="Caption"
+          dense
+        />
+      </div>
+      <div class="row justify-center q-ma-md">
+        <q-input
+          class="col col-sm-6"
+          v-model="post.location"
+          label="Location"
+          dense
+        >
+          <template v-slot:append>
+            <q-btn round dense flat icon="eva-navigation-2-outline" />
+          </template>
+        </q-input>
+      </div>
+      <div class="row justify-center q-mt-lg">
+        <q-btn unelevated rounded color="primary" label="Post Image" />
+      </div>
     </div>
-    <div class="row justify-center q-ma-md">
-      <q-input class="col col-sm-6" v-model="post.location" label="Location" dense >
-        <template v-slot:append>
-          <q-btn round dense flat icon="eva-navigation-2-outline" />
-        </template>
-       </q-input>
-    </div>
-    <div class="row justify-center q-mt-lg">
-      <q-btn unelevated rounded color="primary" label="Post Image" />
-    </div>
-  </div>
   </q-page>
 </template>
 
@@ -26,10 +36,9 @@
 import { defineComponent } from 'vue'
 import { uid } from 'quasar'
 
-
 export default defineComponent({
   name: 'PageCamera',
-  data() {
+  data () {
     return {
       post: {
         id: uid(),
@@ -39,7 +48,7 @@ export default defineComponent({
         date: Date.now()
       }
     }
-  },
+  }
 })
 </script>
 
