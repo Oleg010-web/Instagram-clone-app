@@ -17,7 +17,7 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label class="text-bold">Oleg_Nesterov</q-item-label>
+              <q-item-label class="text-bold">{{ user.name }}</q-item-label>
               <q-item-label caption>
                 {{ post.location }}
               </q-item-label>
@@ -41,8 +41,8 @@
           </q-item-section>
 
           <q-item-section>
-            <q-item-label class="text-bold">Oleg_Nesterov</q-item-label>
-            <q-item-label caption> Oleg_Nesterov </q-item-label>
+            <q-item-label class="text-bold">{{ user.name }}</q-item-label>
+            <q-item-label caption> {{ user.name }} </q-item-label>
           </q-item-section>
         </q-item>
       </div>
@@ -59,6 +59,9 @@ export default defineComponent({
   name: 'PageHome',
   data () {
     return {
+      user: {
+        name: 'Oleg_Nesterov'
+      },
       posts: [
         {
           id: 1,
@@ -97,7 +100,6 @@ export default defineComponent({
       let timeStamp
       for (let index = 0; index < datePost.length; index++) {
         timeStamp = datePost[index]
-        console.log(timeStamp)
       }
       return date.formatDate(timeStamp, 'MMMM D h:mmA')
     }
