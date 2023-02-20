@@ -54,6 +54,7 @@
 import { defineComponent } from 'vue'
 import { date } from 'quasar'
 import { filter } from 'compression'
+import axios from 'axios'
 
 export default defineComponent({
   name: 'PageHome',
@@ -62,36 +63,7 @@ export default defineComponent({
       user: {
         name: 'Oleg_Nesterov'
       },
-      posts: [
-        {
-          id: 1,
-          caption: 'Golden Gate Bridge',
-          date: 1676622944651,
-          location: 'San Francisco, United States',
-          imageUrl: 'https://cdn.quasar.dev/img/parallax2.jpg'
-        },
-        {
-          id: 2,
-          caption: 'Golden Gate Bridge',
-          date: 1676622944651,
-          location: 'San Francisco, United States',
-          imageUrl: 'https://cdn.quasar.dev/img/parallax2.jpg'
-        },
-        {
-          id: 3,
-          caption: 'Golden Gate Bridge',
-          date: 1676622944651,
-          location: 'San Francisco, United States',
-          imageUrl: 'https://cdn.quasar.dev/img/parallax2.jpg'
-        },
-        {
-          id: 4,
-          caption: 'Golden Gate Bridge',
-          date: 1676622944651,
-          location: 'San Francisco, United States',
-          imageUrl: 'https://cdn.quasar.dev/img/parallax2.jpg'
-        }
-      ]
+      posts: []
     }
   },
   computed: {
@@ -103,6 +75,12 @@ export default defineComponent({
       }
       return date.formatDate(timeStamp, 'MMMM D h:mmA')
     }
+  },
+  mounted () {
+    const SERVER_URL = 'http://localhost:3000/posts'
+    axios.get(SERVER_URL).then(Response => {
+      this.posts = Response.data
+    })
   }
 })
 </script>
