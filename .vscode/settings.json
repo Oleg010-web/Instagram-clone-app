@@ -2,7 +2,7 @@
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": true,
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "numso.prettier-standard-vscode" ,
   "editor.codeActionsOnSave": [
     "source.fixAll.eslint"
   ],
@@ -11,5 +11,11 @@
     "javascriptreact",
     "typescript",
     "vue"
-  ]
+  ],
+  "[vue]": {
+    "editor.defaultFormatter": "numso.prettier-standard-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "numso.prettier-standard-vscode"
+  }
 }
