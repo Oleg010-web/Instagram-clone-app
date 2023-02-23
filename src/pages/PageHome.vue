@@ -53,8 +53,9 @@
 <script>
 import { defineComponent } from 'vue'
 import { date } from 'quasar'
-import { filter } from 'compression'
 import axios from 'axios'
+import { filter } from 'compression'
+import { getAllPosts } from 'src/api/posts/get/getPosts.js'
 
 export default defineComponent({
   name: 'PageHome',
@@ -76,11 +77,8 @@ export default defineComponent({
       return date.formatDate(timeStamp, 'MMMM D h:mmA')
     }
   },
-  mounted () {
-    const SERVER_URL = 'http://localhost:3000/posts'
-    axios.get(SERVER_URL).then(Response => {
-      this.posts = Response.data
-    })
+  async mounted () {
+    this.posts = await getAllPosts()
   }
 })
 </script>
