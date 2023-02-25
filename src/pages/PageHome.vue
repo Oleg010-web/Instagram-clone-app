@@ -32,7 +32,7 @@
           </q-card-section>
         </q-card>
       </div>
-      <div class="col-4 large-screen-only">
+      <div class="col-4 large-screen-only" v-if="posts">
         <q-item class="fixed">
           <q-item-section avatar>
             <q-avatar size="50px">
@@ -47,6 +47,7 @@
         </q-item>
       </div>
     </div>
+    <pop-over v-if="popover" class="pop-over"></pop-over>
   </q-page>
 </template>
 
@@ -56,15 +57,20 @@ import { date } from 'quasar'
 import axios from 'axios'
 import { filter } from 'compression'
 import { getAllPosts } from 'src/api/posts/get/getPosts.js'
+import PopOver from 'src/components/PopOver.vue'
 
 export default defineComponent({
   name: 'PageHome',
+  components: {
+    'pop-over': PopOver
+  },
   data () {
     return {
       user: {
         name: 'Oleg_Nesterov'
       },
-      posts: []
+      posts: null,
+      popover: false
     }
   },
   computed: {
@@ -78,7 +84,12 @@ export default defineComponent({
     }
   },
   async mounted () {
-    this.posts = await getAllPosts()
+    this.posts = await getAllPosts().catch(error => {
+      if (error) {
+        this.popover = true
+      }
+      //Logs a string: Error: Request failed with status code 404
+    })
   }
 })
 </script>
@@ -87,4 +98,8 @@ export default defineComponent({
 .card-post
   .q-img
     min-height: 200px
+
+.pop-over
+  width: 100%
+  min-height: 300px
 </style>

@@ -8,5 +8,6 @@ export async function getAllPosts () {
       return Response.data
     }
   })
+
   return data
 }
