@@ -5,7 +5,7 @@
         <div
           class="popover-message-block fit flex flex-center text-center non-selectable q-pa-md"
         >
-          Sorry, we have technical problems. Try to reload page later
+          Error, please try to reload the page.
         </div>
       </div>
     </div>
