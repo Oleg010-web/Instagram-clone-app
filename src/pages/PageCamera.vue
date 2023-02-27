@@ -32,24 +32,19 @@
   </q-page>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
 import { uid } from 'quasar'
+import { reactive } from 'vue';
 
-export default defineComponent({
-  name: 'PageCamera',
-  data () {
-    return {
-      post: {
+
+      const post = reactive({
         id: uid(),
         caption: '',
         location: '',
         photo: null,
         date: Date.now()
-      }
-    }
-  }
-})
+      })
+
 </script>
 
 <style lang="sass">

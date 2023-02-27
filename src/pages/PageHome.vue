@@ -3,7 +3,7 @@
     <div class="row q-col-gutter-lg">
       <div class="col-12 col-sm-8">
         <q-card
-          v-for="post in posts"
+          v-for="post in pageHomeData.posts"
           :key="post.id"
           class="card-post q-mb-md"
           flat
@@ -32,7 +32,7 @@
           </q-card-section>
         </q-card>
       </div>
-      <div class="col-4 large-screen-only" v-if="posts">
+      <div class="col-4 large-screen-only" v-if="pageHomeData.posts">
         <q-item class="fixed">
           <q-item-section avatar>
             <q-avatar size="50px">
@@ -47,51 +47,45 @@
         </q-item>
       </div>
     </div>
-    <pop-over v-if="popover" class="pop-over"></pop-over>
+    <pop-over v-if="pageHomeData.popover" class="pop-over"></pop-over>
   </q-page>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
 import { date } from 'quasar'
 import axios from 'axios'
 import { filter } from 'compression'
 import { getAllPosts } from 'src/api/posts/get/getPosts.js'
 import PopOver from 'src/components/PopOver.vue'
+import { reactive, computed, onMounted } from 'vue'
 
-export default defineComponent({
-  name: 'PageHome',
-  components: {
-    'pop-over': PopOver
-  },
-  data () {
-    return {
-      user: {
-        name: 'Oleg_Nesterov'
-      },
+  const pageHomeData = reactive ({
       posts: null,
       popover: false
-    }
-  },
-  computed: {
-    getDate () {
-      const datePost = this.posts.map(post => post.date)
+  })
+  const user = {
+    name: 'Oleg_Nesterov'
+  }
+
+  const getDate = computed( () => {
+    
+      const datePost = pageHomeData.posts.map(post => post.date)
       let timeStamp
       for (let index = 0; index < datePost.length; index++) {
         timeStamp = datePost[index]
       }
       return date.formatDate(timeStamp, 'MMMM D h:mmA')
-    }
-  },
-  async mounted () {
-    this.posts = await getAllPosts().catch(error => {
+  
+  })
+  
+   onMounted (async()=>{
+    pageHomeData.posts = await getAllPosts().catch(error => {
       if (error) {
-        this.popover = true
+        pageHomeData.popover = true
       }
       //Logs a string: Error: Request failed with status code 404
     })
-  }
-})
+  })
 </script>
 
 <style lang="sass">
