@@ -59,33 +59,31 @@ import { getAllPosts } from 'src/api/posts/get/getPosts.js'
 import PopOver from 'src/components/PopOver.vue'
 import { reactive, computed, onMounted } from 'vue'
 
-  const pageHomeData = reactive ({
-      posts: null,
-      popover: false
-  })
-  const user = {
-    name: 'Oleg_Nesterov'
-  }
+const pageHomeData = reactive({
+  posts: null,
+  popover: false
+})
+const user = {
+  name: 'Oleg_Nesterov'
+}
 
-  const getDate = computed( () => {
-    
-      const datePost = pageHomeData.posts.map(post => post.date)
-      let timeStamp
-      for (let index = 0; index < datePost.length; index++) {
-        timeStamp = datePost[index]
-      }
-      return date.formatDate(timeStamp, 'MMMM D h:mmA')
-  
+const getDate = computed(() => {
+  const datePost = pageHomeData.posts.map(post => post.date)
+  let timeStamp
+  for (let index = 0; index < datePost.length; index++) {
+    timeStamp = datePost[index]
+  }
+  return date.formatDate(timeStamp, 'MMMM D h:mmA')
+})
+
+onMounted(async () => {
+  pageHomeData.posts = await getAllPosts().catch(error => {
+    if (error) {
+      pageHomeData.popover = true
+    }
+    //Logs a string: Error: Request failed with status code 404
   })
-  
-   onMounted (async()=>{
-    pageHomeData.posts = await getAllPosts().catch(error => {
-      if (error) {
-        pageHomeData.popover = true
-      }
-      //Logs a string: Error: Request failed with status code 404
-    })
-  })
+})
 </script>
 
 <style lang="sass">

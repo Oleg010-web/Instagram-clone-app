@@ -34,17 +34,15 @@
 
 <script setup>
 import { uid } from 'quasar'
-import { reactive } from 'vue';
+import { reactive } from 'vue'
 
-
-      const post = reactive({
-        id: uid(),
-        caption: '',
-        location: '',
-        photo: null,
-        date: Date.now()
-      })
-
+const post = reactive({
+  id: uid(),
+  caption: '',
+  location: '',
+  photo: null,
+  date: Date.now()
+})
 </script>
 
 <style lang="sass">
