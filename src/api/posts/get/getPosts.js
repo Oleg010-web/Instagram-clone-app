@@ -3,7 +3,7 @@ import axios, * as others from 'axios'
 export async function getAllPosts () {
   const SERVER_URL = 'http://localhost:3000/posts'
 
-  const data = axios
+  return axios
     .get(SERVER_URL)
     .then(Response => {
       return Response.data
@@ -12,6 +12,4 @@ export async function getAllPosts () {
       console.log(Error)
       return Error.response.data.Error
     })
-
-  return data
 }

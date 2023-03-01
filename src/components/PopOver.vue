@@ -12,13 +12,7 @@
   </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'PopOver'
-})
-</script>
+<script setup></script>
 
 <style lang="sass">
 .popover-message-block
