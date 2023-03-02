@@ -2,21 +2,26 @@
   <q-page class="constrain-more q-pa-md">
     <div class="camera-frame q-pa-md">
       <video 
-        v-show="!imageCaptured.captured"
+        v-show="!imageCaptured"
         ref="video"
         class="full-width"
         autoplay
         playsinline
       />
       <canvas 
-        v-show="imageCaptured.captured"
+        v-show="imageCaptured"
         ref="canvas"
         class="full-width"
         height="200"
       />
     </div>
     <div class="text-center q-pa-md">
-      <q-btn @click="captureImage" round color="grey-10" size="lg" icon="eva-camera" />
+      <q-btn v-if="hasCameraSupport" @click="captureImage" round color="grey-10" size="lg" icon="eva-camera" />
+      <q-file v-else  @input="captureImageFallBack" type="file" v-model="imageUpload" label="Choose an image" accept="image/*" outlined>
+        <template v-slot:prepend>
+          <q-icon name="eva-attach-outline" />
+        </template>
+      </q-file>
       <div class="row justify-center q-ma-md">
         <q-input
           class="col col-sm-6"
@@ -45,10 +50,14 @@
 </template>
 
 <script setup>
+
+//imports
 import { uid } from 'quasar'
 import { reactive, onMounted, ref } from 'vue'
 import * as locales  from 'md-gum-polyfill'
 
+
+//data objects
 const post = reactive({
   id: uid(),
   caption: '',
@@ -57,30 +66,68 @@ const post = reactive({
   date: Date.now()
 })
 
-const imageCaptured = reactive ({
-  captured: false
-})
+
+//refs
+const imageCaptured = ref(false)
+const hasCameraSupport = ref(true)
+const imageUpload = ref([])
 
 let video = ref()
 let canvas = ref()
+
+
+//methods
+const dataUrItoBlob = (dataUri)=>{
+            let binary = atob(dataUri.split(',')[1]);
+            let mimeString = dataUri.split(',')[0].split(':')[1].split(';')[0];
+            let array = [];
+            for (let i = 0; i < binary.length; i++) {
+                array.push(binary.charCodeAt(i));
+            }
+            return new Blob([new Uint8Array(array)], { type: mimeString });
+};
 
 const captureImage = () => {
   canvas.value.width = video.value.getBoundingClientRect().width
   canvas.value.height = video.value.getBoundingClientRect().height
   let context = canvas.value.getContext('2d')
   context.drawImage(video.value, 0, 0, canvas.value.width, canvas.value.height)
-  imageCaptured.captured = true
-
+  imageCaptured.value = true
+  post.photo = dataUrItoBlob(canvas.value.toDataURL()) 
 }
+
+const captureImageFallBack = (file) => {
+  post.photo = file
+  
+  let context = canvas.value.getContext('2d')
+  let reader = new FileReader();
+    reader.onload = event => {
+        let img = new Image()
+        img.onload = () => {
+            canvas.value.width = img.width
+            canvas.value.height = img.height
+            context.drawImage(img,0,0)
+            imageCaptured.value = true
+        }
+        img.src = event.target.result
+    }
+    console.log(file.target.files[0]);
+    reader.readAsDataURL(file.target.files[0])
+}
+
 const initCamera = () => {
   navigator.mediaDevices.getUserMedia({
     video: true
   }).then(Stream => {
     
     video.value.srcObject = Stream
+  }).catch(Error => {
+    hasCameraSupport.value = false
   })
 }
 
+
+//lifecycle hooks
 onMounted( () => {
  initCamera()
 }
