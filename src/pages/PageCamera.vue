@@ -17,7 +17,7 @@
     </div>
     <div class="text-center q-pa-md">
       <q-btn v-if="hasCameraSupport" @click="captureImage" round color="grey-10" size="lg" icon="eva-camera" />
-      <q-file v-else  @input="captureImageFallBack" type="file" v-model="imageUpload" label="Choose an image" accept="image/*" outlined>
+      <q-file v-else  @update:model-value="captureImageFallBack" type="file" v-model="imageUpload" label="Choose an image" accept="image/*" outlined>
         <template v-slot:prepend>
           <q-icon name="eva-attach-outline" />
         </template>
@@ -53,7 +53,7 @@
 
 //imports
 import { uid } from 'quasar'
-import { reactive, onMounted, ref } from 'vue'
+import { reactive, onMounted, ref, onBeforeUnmount } from 'vue'
 import * as locales  from 'md-gum-polyfill'
 
 
@@ -94,6 +94,7 @@ const captureImage = () => {
   context.drawImage(video.value, 0, 0, canvas.value.width, canvas.value.height)
   imageCaptured.value = true
   post.photo = dataUrItoBlob(canvas.value.toDataURL()) 
+  disableCamera()
 }
 
 const captureImageFallBack = (file) => {
@@ -111,8 +112,13 @@ const captureImageFallBack = (file) => {
         }
         img.src = event.target.result
     }
-    console.log(file.target.files[0]);
-    reader.readAsDataURL(file.target.files[0])
+    reader.readAsDataURL(file)
+}
+
+const disableCamera = () => {
+  video.value.srcObject.getVideoTracks().forEach(track => {
+    track.stop()
+  });
 }
 
 const initCamera = () => {
@@ -133,6 +139,12 @@ onMounted( () => {
 }
   
 )
+
+onBeforeUnmount(() => {
+  if(hasCameraSupport.value){
+    disableCamera()
+  }
+})
 </script>
 
 <style lang="sass">
