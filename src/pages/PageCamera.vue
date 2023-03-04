@@ -38,7 +38,7 @@
           dense
         >
           <template v-slot:append>
-            <q-btn round dense flat icon="eva-navigation-2-outline" />
+            <q-btn @click="getLocation" round dense flat icon="eva-navigation-2-outline" />
           </template>
         </q-input>
       </div>
@@ -55,6 +55,8 @@
 import { uid } from 'quasar'
 import { reactive, onMounted, ref, onBeforeUnmount } from 'vue'
 import * as locales  from 'md-gum-polyfill'
+import axios, * as others from 'axios'
+import { Result } from 'postcss';
 
 
 //data objects
@@ -132,7 +134,30 @@ const initCamera = () => {
   })
 }
 
+const getLocation = () => {
+  console.log('getLocation');
+  navigator.geolocation.getCurrentPosition(position => {
+    getSityandCountry(position)
+  }, err => {
+    console.log('err: ', err);
+  }, {timeout: 7000 })
+}
 
+const getSityandCountry = async (position) => {
+  let apiUrl = `https://geocode.xyz/${position.coords.latitude},${position.coords.longitude}?json=1`
+  await axios.get(apiUrl).then(Result => {
+    locationSuccess(Result)
+  }).catch(Error => {
+    console.log(('err: ', Error));
+  })
+}
+
+const locationSuccess = (result) => {
+  post.location = result.data.city
+  if(result.data.country){
+    post.location += `, ${result.data.country}`
+  }
+}
 //lifecycle hooks
 onMounted( () => {
  initCamera()
