@@ -33,12 +33,13 @@
       <div class="row justify-center q-ma-md">
         <q-input
           class="col col-sm-6"
+          :loading="locationLoading"
           v-model="post.location"
           label="Location"
           dense
         >
           <template v-slot:append>
-            <q-btn @click="getLocation" round dense flat icon="eva-navigation-2-outline" />
+            <q-btn v-if="!locationLoading" @click="getLocation" round dense flat icon="eva-navigation-2-outline" />
           </template>
         </q-input>
       </div>
@@ -73,6 +74,7 @@ const $q = useQuasar()
 const imageCaptured = ref(false)
 const hasCameraSupport = ref(true)
 const imageUpload = ref([])
+const locationLoading = ref(false)
 
 let video = ref()
 let canvas = ref()
@@ -135,7 +137,7 @@ const initCamera = () => {
 }
 
 const getLocation = () => {
-  console.log('getLocation');
+  locationLoading.value = true
   navigator.geolocation.getCurrentPosition(position => {
     getSityandCountry(position)
   }, err => {
@@ -157,6 +159,7 @@ const locationSuccess = (result) => {
   if(result.data.country){
     post.location += `, ${result.data.country}`
   }
+  locationLoading.value = false
 }
 
 const locationError = () => {
@@ -166,7 +169,7 @@ const locationError = () => {
         message: 'Soory, could not find your location'
       })
 
-  
+      locationLoading.value = false
 }
 
 
