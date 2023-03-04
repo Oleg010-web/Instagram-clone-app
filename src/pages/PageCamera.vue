@@ -56,7 +56,7 @@ import { uid } from 'quasar'
 import { reactive, onMounted, ref, onBeforeUnmount } from 'vue'
 import * as locales  from 'md-gum-polyfill'
 import axios, * as others from 'axios'
-import { Result } from 'postcss';
+import { useQuasar } from 'quasar'
 
 
 //data objects
@@ -67,7 +67,7 @@ const post = reactive({
   photo: null,
   date: Date.now()
 })
-
+const $q = useQuasar()
 
 //refs
 const imageCaptured = ref(false)
@@ -139,7 +139,7 @@ const getLocation = () => {
   navigator.geolocation.getCurrentPosition(position => {
     getSityandCountry(position)
   }, err => {
-    console.log('err: ', err);
+    locationError()
   }, {timeout: 7000 })
 }
 
@@ -148,7 +148,7 @@ const getSityandCountry = async (position) => {
   await axios.get(apiUrl).then(Result => {
     locationSuccess(Result)
   }).catch(Error => {
-    console.log(('err: ', Error));
+    locationError()
   })
 }
 
@@ -158,6 +158,18 @@ const locationSuccess = (result) => {
     post.location += `, ${result.data.country}`
   }
 }
+
+const locationError = () => {
+
+      $q.dialog({
+        title: 'Error',
+        message: 'Soory, could not find your location'
+      })
+
+  
+}
+
+
 //lifecycle hooks
 onMounted( () => {
  initCamera()
