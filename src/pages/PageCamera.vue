@@ -1,14 +1,14 @@
 <template>
   <q-page class="constrain-more q-pa-md">
     <div class="camera-frame q-pa-md">
-      <video 
+      <video
         v-show="!imageCaptured"
         ref="video"
         class="full-width"
         autoplay
         playsinline
       />
-      <canvas 
+      <canvas
         v-show="imageCaptured"
         ref="canvas"
         class="full-width"
@@ -16,8 +16,23 @@
       />
     </div>
     <div class="text-center q-pa-md">
-      <q-btn v-if="hasCameraSupport" @click="captureImage" round color="grey-10" size="lg" icon="eva-camera" />
-      <q-file v-else  @update:model-value="captureImageFallBack" type="file" v-model="imageUpload" label="Choose an image" accept="image/*" outlined>
+      <q-btn
+        v-if="hasCameraSupport"
+        @click="captureImage"
+        round
+        color="grey-10"
+        size="lg"
+        icon="eva-camera"
+      />
+      <q-file
+        v-else
+        @update:model-value="captureImageFallBack"
+        type="file"
+        v-model="imageUpload"
+        label="Choose an image"
+        accept="image/*"
+        outlined
+      >
         <template v-slot:prepend>
           <q-icon name="eva-attach-outline" />
         </template>
@@ -39,7 +54,14 @@
           dense
         >
           <template v-slot:append>
-            <q-btn v-if="!locationLoading" @click="getLocation" round dense flat icon="eva-navigation-2-outline" />
+            <q-btn
+              v-if="!locationLoading"
+              @click="getLocation"
+              round
+              dense
+              flat
+              icon="eva-navigation-2-outline"
+            />
           </template>
         </q-input>
       </div>
@@ -51,14 +73,12 @@
 </template>
 
 <script setup>
-
 //imports
 import { uid } from 'quasar'
 import { reactive, onMounted, ref, onBeforeUnmount } from 'vue'
-import * as locales  from 'md-gum-polyfill'
+import * as locales from 'md-gum-polyfill'
 import axios, * as others from 'axios'
 import { useQuasar } from 'quasar'
-
 
 //data objects
 const post = reactive({
@@ -79,17 +99,16 @@ const locationLoading = ref(false)
 let video = ref()
 let canvas = ref()
 
-
 //methods
-const dataUrItoBlob = (dataUri)=>{
-            let binary = atob(dataUri.split(',')[1]);
-            let mimeString = dataUri.split(',')[0].split(':')[1].split(';')[0];
-            let array = [];
-            for (let i = 0; i < binary.length; i++) {
-                array.push(binary.charCodeAt(i));
-            }
-            return new Blob([new Uint8Array(array)], { type: mimeString });
-};
+const dataUrItoBlob = dataUri => {
+  let binary = atob(dataUri.split(',')[1])
+  let mimeString = dataUri.split(',')[0].split(':')[1].split(';')[0]
+  let array = []
+  for (let i = 0; i < binary.length; i++) {
+    array.push(binary.charCodeAt(i))
+  }
+  return new Blob([new Uint8Array(array)], { type: mimeString })
+}
 
 const captureImage = () => {
   canvas.value.width = video.value.getBoundingClientRect().width
@@ -97,91 +116,96 @@ const captureImage = () => {
   let context = canvas.value.getContext('2d')
   context.drawImage(video.value, 0, 0, canvas.value.width, canvas.value.height)
   imageCaptured.value = true
-  post.photo = dataUrItoBlob(canvas.value.toDataURL()) 
+  post.photo = dataUrItoBlob(canvas.value.toDataURL())
   disableCamera()
 }
 
-const captureImageFallBack = (file) => {
+const captureImageFallBack = file => {
   post.photo = file
-  
+
   let context = canvas.value.getContext('2d')
-  let reader = new FileReader();
-    reader.onload = event => {
-        let img = new Image()
-        img.onload = () => {
-            canvas.value.width = img.width
-            canvas.value.height = img.height
-            context.drawImage(img,0,0)
-            imageCaptured.value = true
-        }
-        img.src = event.target.result
+  let reader = new FileReader()
+  reader.onload = event => {
+    let img = new Image()
+    img.onload = () => {
+      canvas.value.width = img.width
+      canvas.value.height = img.height
+      context.drawImage(img, 0, 0)
+      imageCaptured.value = true
     }
-    reader.readAsDataURL(file)
+    img.src = event.target.result
+  }
+  reader.readAsDataURL(file)
 }
 
 const disableCamera = () => {
   video.value.srcObject.getVideoTracks().forEach(track => {
     track.stop()
-  });
+  })
 }
 
 const initCamera = () => {
-  navigator.mediaDevices.getUserMedia({
-    video: true
-  }).then(Stream => {
-    
-    video.value.srcObject = Stream
-  }).catch(Error => {
-    hasCameraSupport.value = false
-  })
+  navigator.mediaDevices
+    .getUserMedia({
+      video: true
+    })
+    .then(Stream => {
+      video.value.srcObject = Stream
+    })
+    .catch(Error => {
+      hasCameraSupport.value = false
+    })
 }
 
 const getLocation = () => {
   locationLoading.value = true
-  navigator.geolocation.getCurrentPosition(position => {
-    getSityandCountry(position)
-  }, err => {
-    locationError()
-  }, {timeout: 7000 })
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      getSityandCountry(position)
+    },
+    err => {
+      locationError()
+    },
+    { timeout: 7000 }
+  )
 }
 
-const getSityandCountry = async (position) => {
+const getSityandCountry = async position => {
   let apiUrl = `https://geocode.xyz/${position.coords.latitude},${position.coords.longitude}?json=1`
-  await axios.get(apiUrl).then(Result => {
-    locationSuccess(Result)
-  }).catch(Error => {
-    locationError()
-  })
+  await axios
+    .get(apiUrl)
+    .then(Result => {
+      locationSuccess(Result)
+    })
+    .catch(Error => {
+      locationError()
+    })
 }
 
-const locationSuccess = (result) => {
+const locationSuccess = result => {
   post.location = result.data.city
-  if(result.data.country){
+  if (result.data.country) {
     post.location += `, ${result.data.country}`
   }
   locationLoading.value = false
 }
 
 const locationError = () => {
+  $q.dialog({
+    title: 'Error',
+    message: 'Soory, could not find your location'
+  })
 
-      $q.dialog({
-        title: 'Error',
-        message: 'Soory, could not find your location'
-      })
-
-      locationLoading.value = false
+  locationLoading.value = false
 }
-
 
 //lifecycle hooks
-onMounted( () => {
- initCamera()
-}
-  
-)
+onMounted(() => {
+  initCamera()
+})
 
 onBeforeUnmount(() => {
-  if(hasCameraSupport.value){
+  if (hasCameraSupport.value) {
     disableCamera()
   }
 })
