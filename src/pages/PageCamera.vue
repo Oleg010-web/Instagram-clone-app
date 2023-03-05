@@ -79,8 +79,15 @@ import { reactive, onMounted, ref, onBeforeUnmount } from 'vue'
 import * as locales from 'md-gum-polyfill'
 import axios, * as others from 'axios'
 import { useQuasar } from 'quasar'
+import { dataUrItoBlob } from 'src/composable/useFileLikeObject'
+import {
+  disableCamera,
+  video,
+  hasCameraSupport,
+  initCamera
+} from 'src/state/camera'
 
-//data objects
+//data objects && refs
 const post = reactive({
   id: uid(),
   caption: '',
@@ -88,27 +95,15 @@ const post = reactive({
   photo: null,
   date: Date.now()
 })
-const $q = useQuasar()
 
-//refs
 const imageCaptured = ref(false)
-const hasCameraSupport = ref(true)
 const imageUpload = ref([])
 const locationLoading = ref(false)
+const $q = useQuasar()
 
-let video = ref()
 let canvas = ref()
 
 //methods
-const dataUrItoBlob = dataUri => {
-  let binary = atob(dataUri.split(',')[1])
-  let mimeString = dataUri.split(',')[0].split(':')[1].split(';')[0]
-  let array = []
-  for (let i = 0; i < binary.length; i++) {
-    array.push(binary.charCodeAt(i))
-  }
-  return new Blob([new Uint8Array(array)], { type: mimeString })
-}
 
 const captureImage = () => {
   canvas.value.width = video.value.getBoundingClientRect().width
@@ -138,25 +133,6 @@ const captureImageFallBack = file => {
   reader.readAsDataURL(file)
 }
 
-const disableCamera = () => {
-  video.value.srcObject.getVideoTracks().forEach(track => {
-    track.stop()
-  })
-}
-
-const initCamera = () => {
-  navigator.mediaDevices
-    .getUserMedia({
-      video: true
-    })
-    .then(Stream => {
-      video.value.srcObject = Stream
-    })
-    .catch(Error => {
-      hasCameraSupport.value = false
-    })
-}
-
 const getLocation = () => {
   locationLoading.value = true
   navigator.geolocation.getCurrentPosition(
@@ -182,7 +158,7 @@ const getSityandCountry = async position => {
     })
 }
 
-const locationSuccess = result => {
+const locationSuccess = (result) => {
   post.location = result.data.city
   if (result.data.country) {
     post.location += `, ${result.data.country}`
@@ -193,13 +169,13 @@ const locationSuccess = result => {
 const locationError = () => {
   $q.dialog({
     title: 'Error',
-    message: 'Soory, could not find your location'
+    message: 'Sorry, could not find your location'
   })
 
   locationLoading.value = false
 }
 
-//lifecycle hooks
+//Hooks
 onMounted(() => {
   initCamera()
 })
