@@ -94,7 +94,7 @@ import {
   postLocation
 } from 'src/state/location'
 
-//data objects && refs
+//data 
 const post = reactive({
   id: uid(),
   caption: '',
@@ -152,7 +152,7 @@ const getLocation = () => {
   )
 }
 
-//Hooks
+//hooks
 onMounted(() => {
   initCamera()
 })

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { Dialog } from 'quasar'
 import axios, * as others from 'axios'
 
-//data refs
+//data
 export const locationLoading = ref(false)
 export const postLocation = ref()
 
