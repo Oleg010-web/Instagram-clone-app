@@ -78,7 +78,7 @@ import { uid } from 'quasar'
 import { reactive, onMounted, ref, onBeforeUnmount } from 'vue'
 import * as locales from 'md-gum-polyfill'
 import axios, * as others from 'axios'
-import { useQuasar } from 'quasar'
+// import { useQuasar } from 'quasar'
 import { dataUrItoBlob } from 'src/composable/useFileLikeObject'
 import {
   disableCamera,
@@ -86,6 +86,13 @@ import {
   hasCameraSupport,
   initCamera
 } from 'src/state/camera'
+import {
+  locationError,
+  locationLoading,
+  getSityandCountry,
+  locationSuccess,
+  postLocation
+} from 'src/state/location'
 
 //data objects && refs
 const post = reactive({
@@ -98,8 +105,6 @@ const post = reactive({
 
 const imageCaptured = ref(false)
 const imageUpload = ref([])
-const locationLoading = ref(false)
-const $q = useQuasar()
 
 let canvas = ref()
 
@@ -138,41 +143,13 @@ const getLocation = () => {
   navigator.geolocation.getCurrentPosition(
     position => {
       getSityandCountry(position)
+      post.location = postLocation
     },
     err => {
       locationError()
     },
     { timeout: 7000 }
   )
-}
-
-const getSityandCountry = async position => {
-  let apiUrl = `https://geocode.xyz/${position.coords.latitude},${position.coords.longitude}?json=1`
-  await axios
-    .get(apiUrl)
-    .then(Result => {
-      locationSuccess(Result)
-    })
-    .catch(Error => {
-      locationError()
-    })
-}
-
-const locationSuccess = (result) => {
-  post.location = result.data.city
-  if (result.data.country) {
-    post.location += `, ${result.data.country}`
-  }
-  locationLoading.value = false
-}
-
-const locationError = () => {
-  $q.dialog({
-    title: 'Error',
-    message: 'Sorry, could not find your location'
-  })
-
-  locationLoading.value = false
 }
 
 //Hooks
