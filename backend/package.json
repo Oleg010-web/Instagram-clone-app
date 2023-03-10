@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oleg010-web/Quasargram-app.git"
+  },
+  "author": "Oleg010-web",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Oleg010-web/Quasargram-app/issues"
+  },
+  "homepage": "https://github.com/Oleg010-web/Quasargram-app#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
