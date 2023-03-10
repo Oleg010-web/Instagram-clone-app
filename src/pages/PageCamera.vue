@@ -89,11 +89,9 @@ import {
 import {
   locationError,
   locationLoading,
-  getSityandCountry,
-  locationSuccess,
   postLocation
 } from 'src/state/location'
-
+import { getSityandCountry } from 'src/api/location/get/getSityandCountry'
 //data 
 const post = reactive({
   id: uid(),

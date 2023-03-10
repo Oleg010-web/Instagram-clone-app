@@ -1,24 +1,12 @@
 //imports
 import { ref } from 'vue'
 import { Dialog } from 'quasar'
-import axios, * as others from 'axios'
 
 //data
 export const locationLoading = ref(false)
 export const postLocation = ref()
 
 //methods
-export const getSityandCountry = async position => {
-  let apiUrl = `https://geocode.xyz/${position.coords.latitude},${position.coords.longitude}?json=1`
-  await axios
-    .get(apiUrl)
-    .then(Result => {
-      locationSuccess(Result)
-    })
-    .catch(Error => {
-      locationError()
-    })
-}
 
 export const locationSuccess = result => {
   postLocation.value = result.data.city
