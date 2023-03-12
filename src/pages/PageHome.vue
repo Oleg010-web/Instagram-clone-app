@@ -50,7 +50,8 @@
       </div>
     </template>
 
-    <pop-over v-else class="pop-over"></pop-over>
+    <pop-over v-if="loadingData" class="pop-over"></pop-over>
+    <pre-loader v-if="preLoaderStatus"></pre-loader>
   </q-page>
 </template>
 
@@ -58,7 +59,8 @@
 import { date } from 'quasar'
 import axios from 'axios'
 import { filter } from 'compression'
-import { getAllPosts } from 'src/api/posts/get/getPosts.js'
+import { getAllPosts, loadingData, preLoaderStatus } from 'src/api/posts/get/getPosts.js'
+import PreLoader from 'src/components/PreLoader.vue'
 import PopOver from 'src/components/PopOver.vue'
 import { reactive, computed, onMounted, ref } from 'vue'
 
@@ -71,6 +73,8 @@ const user = {
 
 onMounted(async () => {
   pageHomeData.posts = await getAllPosts()
+ 
+ 
 
   pageHomeData.posts.forEach(element => {
     element.date = date.formatDate(element.date, 'DD-MM-YYYY')
