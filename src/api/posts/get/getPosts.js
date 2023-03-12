@@ -1,9 +1,12 @@
+//imports
 import axios, * as others from 'axios'
 import { ref } from 'vue'
 
+//data
 export const loadingData = ref(false)
 export const preLoaderStatus = ref(false)
 
+//methods
 export async function getAllPosts () {
   const SERVER_URL = 'http://localhost:3000/posts'
   preLoaderStatus.value = true
