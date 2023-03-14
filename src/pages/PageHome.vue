@@ -56,27 +56,32 @@
 </template>
 
 <script setup>
+//imports
 import { date } from 'quasar'
-import axios from 'axios'
 import { filter } from 'compression'
-import {
-  getAllPosts,
-  loadingData,
-  preLoaderStatus
-} from 'src/api/posts/get/getPosts.js'
+import { getAllPosts } from 'src/api/posts/get/getPosts.js'
 import PreLoader from 'src/components/PreLoader.vue'
 import PopOver from 'src/components/PopOver.vue'
 import { reactive, computed, onMounted, ref } from 'vue'
 
+//data
 const pageHomeData = reactive({
   posts: null
 })
 const user = {
   name: 'Oleg_Nesterov'
 }
+const loadingData = ref(false)
+const preLoaderStatus = ref(false)
 
+//hooks
 onMounted(async () => {
+  preLoaderStatus.value = true
   pageHomeData.posts = await getAllPosts()
+  preLoaderStatus.value = false
+  if (!pageHomeData.posts) {
+    loadingData.value = true
+  }
 
   pageHomeData.posts.forEach(element => {
     element.date = date.formatDate(element.date, 'DD-MM-YYYY')
