@@ -77,8 +77,6 @@
 import { uid } from 'quasar'
 import { reactive, onMounted, ref, onBeforeUnmount } from 'vue'
 import * as locales from 'md-gum-polyfill'
-import axios, * as others from 'axios'
-// import { useQuasar } from 'quasar'
 import { dataUrItoBlob } from 'src/composable/useFileLikeObject'
 import {
   disableCamera,
@@ -89,12 +87,10 @@ import {
 import {
   locationError,
   locationLoading,
-  getSityandCountry,
-  locationSuccess,
   postLocation
 } from 'src/state/location'
-
-//data 
+import { getSityandCountry } from 'src/api/posts/get/getSityandCountry'
+//data
 const post = reactive({
   id: uid(),
   caption: '',

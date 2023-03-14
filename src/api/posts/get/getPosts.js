@@ -1,8 +1,10 @@
+//imports
 import axios, * as others from 'axios'
 
+
+//methods
 export async function getAllPosts () {
   const SERVER_URL = 'http://localhost:3000/posts'
-
   return axios
     .get(SERVER_URL)
     .then(Response => {
@@ -10,6 +12,6 @@ export async function getAllPosts () {
     })
     .catch(Error => {
       console.log(Error)
-      return Error.response.data.Error
+      return Error.response
     })
 }
