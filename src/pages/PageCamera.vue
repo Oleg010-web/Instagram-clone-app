@@ -66,7 +66,7 @@
         </q-input>
       </div>
       <div class="row justify-center q-mt-lg">
-        <q-btn unelevated rounded color="primary" label="Post Image" />
+        <q-btn @click="addPost" unelevated rounded color="primary" label="Post Image" />
       </div>
     </div>
   </q-page>
@@ -90,6 +90,7 @@ import {
   postLocation
 } from 'src/state/location'
 import { getSityandCountry } from 'src/api/posts/get/getSityandCountry'
+import axios, * as others from 'axios'
 //data
 const post = reactive({
   id: uid(),
@@ -146,6 +147,22 @@ const getLocation = () => {
     },
     { timeout: 7000 }
   )
+}
+
+const addPost = () => {
+  console.log('addPost');
+  let formData = new FormData()
+  formData.append('id', post.id)
+  formData.append('caption', post.caption)
+  formData.append('location', post.location)
+  formData.append('date', post.date)
+  formData.append('file', post.photo, post.id + '.png')
+
+  axios.post(`${process.env.API}/createPost`, formData).then(response => {
+    console.log('response: ', response);
+  }).catch(err => {
+    console.log('err: ', err);
+  })
 }
 
 //hooks
