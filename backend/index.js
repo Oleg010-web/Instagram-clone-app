@@ -13,6 +13,10 @@ const {
 } = require('firebase-admin/firestore')
 const { getStorage } = require('firebase-admin/storage');
 const busboy = require('busboy');
+const path = require('path');
+const os = require('os');
+const fs = require('fs')
+const UUID = require('uuid-v4');
 
 // config-express
 
@@ -51,9 +55,11 @@ app.get('/posts', (request, response) => {
 
 app.post('/createPost', (request, response) => {
   response.set('Access-Control-Allow-Origin', '*')
+  let uuid = UUID()
  
   const bb = busboy({ headers: request.headers });
   let fields = {}
+  let fileData = {}
   bb.on('file', (name, file, info) => {
     const { filename, encoding, mimeType } = info;
     console.log(
@@ -62,25 +68,45 @@ app.post('/createPost', (request, response) => {
       encoding,
       mimeType
     );
-    file.on('data', (data) => {
-      console.log(`File [${name}] got ${data.length} bytes`);
-    }).on('close', () => {
-      console.log(`File [${name}] done`);
-    });
+    const filePath = path.join(os.tmpdir(), filename) 
+    file.pipe(fs.createWriteStream(filePath))
+    fileData = {filePath, mimeType}
   });
   bb.on('field', (name, val, info) => {
     fields[name] = val
   });
   bb.on('close', () => {
-    db.collection('posts').doc(fields.id).set({
+
+    bucket.upload(
+      fileData.filePath,
+      {
+        uploadType: 'media',
+        metadata: {
+          metadata: {
+            contentType: fileData.mimeType,
+            firebaseStorageDownloadTokens: uuid
+          }
+        }
+      },
+      (err, uplodadFile) => {
+        if(!err){
+          createDocument(uplodadFile)
+        }
+      }
+    )
+      function createDocument(uplodadFile) {
+      db.collection('posts').doc(fields.id).set({
       id: fields.id,
       caption: fields.caption,
       location: fields.location,
       date: parseInt(fields.date),
-      imageUrl: 'https://firebasestorage.googleapis.com/v0/b/social-media-on-quasar.appspot.com/o/Drottningholm.jpeg?alt=media&token=477b97a4-bd3b-47aa-9ced-9bc1cba25261'
-    });
+      imageUrl: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${uplodadFile.name}?alt=media&token=${uuid}`
+      }).then(() => {
+        response.send('post added: ' + fields.id)
+      })
+    }
+
     // response.writeHead(303, { Connection: 'close', Location: '/' });
-    response.send('Done!')
   });
   request.pipe(bb);
 })
