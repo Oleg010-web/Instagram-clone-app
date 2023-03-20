@@ -67,7 +67,14 @@
         </q-input>
       </div>
       <div class="row justify-center q-mt-lg">
-        <q-btn @click="addPost" :disable="!post.caption || post.photo" unelevated rounded color="primary" label="Post Image" />
+        <q-btn
+          @click="addPost"
+          :disable="!post.caption || post.photo"
+          unelevated
+          rounded
+          color="primary"
+          label="Post Image"
+        />
       </div>
     </div>
   </q-page>
@@ -77,7 +84,7 @@
 //imports
 import { uid } from 'quasar'
 import { useQuasar } from 'quasar'
-import { reactive, onMounted, ref, onBeforeUnmount } from 'vue'
+import { reactive, onMounted, ref, onBeforeUnmount, watch } from 'vue'
 import * as locales from 'md-gum-polyfill'
 import { dataUrItoBlob } from 'src/composable/useFileLikeObject'
 import {
@@ -92,11 +99,12 @@ import {
   postLocation
 } from 'src/state/location'
 import { postError, successfulPostAdded } from 'src/state/post'
-import { getSityandCountry } from 'src/api/posts/get/getSityandCountry'
-import axios, * as others from 'axios'
+import { getSityandCountry } from 'src/api/posts/getSityandCountry'
+import { sendPost } from 'src/api/posts/sendPost'
+// import axios, * as others from 'axios'
 import { useRouter } from 'vue-router'
 //data
-const post = reactive({
+let post = reactive({
   id: uid(),
   caption: '',
   location: '',
@@ -107,7 +115,7 @@ const post = reactive({
 const imageCaptured = ref(false)
 const imageUpload = ref([])
 const $q = useQuasar()
-const router = useRouter();
+const router = useRouter()
 
 let canvas = ref()
 
@@ -155,8 +163,8 @@ const getLocation = () => {
   )
 }
 
-const addPost = () => {
-  console.log('addPost');
+const addPost = async () => {
+  console.log('addPost')
   let formData = new FormData()
   formData.append('id', post.id)
   formData.append('caption', post.caption)
@@ -164,12 +172,11 @@ const addPost = () => {
   formData.append('date', post.date)
   formData.append('file', post.photo, post.id + '.png')
 
-  axios.post(`${process.env.API}/createPost`, formData).then(response => {
+  post = await sendPost(formData)
+  console.log(post)
+  if (post) {
     router.push('/')
-    successfulPostAdded()
-  }).catch(err => {
-    postError()
-  })
+  }
 }
 
 //hooks

@@ -1,7 +1,6 @@
 //imports
 import axios, * as others from 'axios'
 
-
 //methods
 export async function getAllPosts () {
   const SERVER_URL = `${process.env.API}/posts`

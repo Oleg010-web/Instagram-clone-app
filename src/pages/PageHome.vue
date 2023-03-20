@@ -59,7 +59,7 @@
 //imports
 import { date } from 'quasar'
 import { filter } from 'compression'
-import { getAllPosts } from 'src/api/posts/get/getPosts.js'
+import { getAllPosts } from 'src/api/posts/getPosts.js'
 import PreLoader from 'src/components/PreLoader.vue'
 import PopOver from 'src/components/PopOver.vue'
 import { reactive, computed, onMounted, ref } from 'vue'
