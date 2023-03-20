@@ -98,10 +98,8 @@ import {
   locationLoading,
   postLocation
 } from 'src/state/location'
-import { postError, successfulPostAdded } from 'src/state/post'
 import { getSityandCountry } from 'src/api/posts/getSityandCountry'
 import { sendPost } from 'src/api/posts/sendPost'
-// import axios, * as others from 'axios'
 import { useRouter } from 'vue-router'
 //data
 let post = reactive({
@@ -164,7 +162,6 @@ const getLocation = () => {
 }
 
 const addPost = async () => {
-  console.log('addPost')
   let formData = new FormData()
   formData.append('id', post.id)
   formData.append('caption', post.caption)
