@@ -19,6 +19,7 @@
       <q-btn
         v-if="hasCameraSupport"
         @click="captureImage"
+        :disable="imageCaptured"
         round
         color="grey-10"
         size="lg"
@@ -41,7 +42,7 @@
         <q-input
           class="col col-sm-6"
           v-model="post.caption"
-          label="Caption"
+          label="Caption *"
           dense
         />
       </div>
@@ -66,7 +67,14 @@
         </q-input>
       </div>
       <div class="row justify-center q-mt-lg">
-        <q-btn unelevated rounded color="primary" label="Post Image" />
+        <q-btn
+          @click="addPost"
+          :disable="!post.caption || post.photo"
+          unelevated
+          rounded
+          color="primary"
+          label="Post Image"
+        />
       </div>
     </div>
   </q-page>
@@ -75,7 +83,8 @@
 <script setup>
 //imports
 import { uid } from 'quasar'
-import { reactive, onMounted, ref, onBeforeUnmount } from 'vue'
+import { useQuasar } from 'quasar'
+import { reactive, onMounted, ref, onBeforeUnmount, watch } from 'vue'
 import * as locales from 'md-gum-polyfill'
 import { dataUrItoBlob } from 'src/composable/useFileLikeObject'
 import {
@@ -89,9 +98,11 @@ import {
   locationLoading,
   postLocation
 } from 'src/state/location'
-import { getSityandCountry } from 'src/api/posts/get/getSityandCountry'
+import { getSityandCountry } from 'src/api/posts/getSityandCountry'
+import { sendPost } from 'src/api/posts/sendPost'
+import { useRouter } from 'vue-router'
 //data
-const post = reactive({
+let post = reactive({
   id: uid(),
   caption: '',
   location: '',
@@ -101,6 +112,8 @@ const post = reactive({
 
 const imageCaptured = ref(false)
 const imageUpload = ref([])
+const $q = useQuasar()
+const router = useRouter()
 
 let canvas = ref()
 
@@ -146,6 +159,21 @@ const getLocation = () => {
     },
     { timeout: 7000 }
   )
+}
+
+const addPost = async () => {
+  let formData = new FormData()
+  formData.append('id', post.id)
+  formData.append('caption', post.caption)
+  formData.append('location', post.location)
+  formData.append('date', post.date)
+  formData.append('file', post.photo, post.id + '.png')
+
+  post = await sendPost(formData)
+  console.log(post)
+  if (post) {
+    router.push('/')
+  }
 }
 
 //hooks
